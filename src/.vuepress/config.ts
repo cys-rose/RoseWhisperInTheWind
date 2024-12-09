@@ -5,7 +5,7 @@ import theme from "./theme.js";
 
 const __dirname = getDirname(import.meta.url);
 export default defineUserConfig({
-  base: "/",
+  base: "/RoseWhisperInTheWind/",
   head: [["link", { rel: "icon", href: "/RoseLogo.png" }]],
   lang: "zh-CN",
   title: "风中玫瑰的低语",
