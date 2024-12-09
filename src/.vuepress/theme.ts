@@ -35,7 +35,7 @@ export default hopeTheme(
       description: "迷茫大学生",
       intro: "/intro.html",
       medias: {
-        BiliBili: "https://example.com",
+        BiliBili: "https://b23.tv/yEVJhrl",
         // Email: "mailto:info@example.com",
         // Flipboard: "https://example.com",
         Gitee: "https://example.com",
