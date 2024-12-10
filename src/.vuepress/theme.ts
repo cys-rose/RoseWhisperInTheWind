@@ -72,14 +72,25 @@ export default hopeTheme(
 
     // 在这里配置主题提供的插件
     plugins: {
+      search: {
+        maxSuggestions: 10, // 搜索的最大匹配数
+        hotReload: false, // 是否在生产环境中生成索引（默认为 true）
+        suggestion: true, // 是否启用搜索建议（默认为 true）
+        locales: {
+          "/": {
+            placeholder: "搜索文章", // 中文占位符文本
+          },
+        },
+      },
       blog: true,
 
       // 启用之前需安装 @waline/client
       // 警告: 这是一个仅供演示的测试服务，在生产环境中请自行部署并使用自己的服务！
-      // comment: {
-      //   provider: "Waline",
-      //   serverURL: "https://waline-comment.vuejs.press",
-      // },
+      comment: {
+        provider: "Waline",
+        serverURL:
+          "https://my-rose-whisper-w179xzs4a-cys-roses-projects.vercel.app",
+      },
 
       components: {
         components: ["Badge", "VPCard"],
