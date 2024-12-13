@@ -32,7 +32,7 @@ export default hopeTheme(
 
     // 博客相关
     blog: {
-      description: "迷茫大学生",
+      description: "严肃大学生",
       intro: "/intro.html",
       medias: {
         BiliBili: "https://b23.tv/yEVJhrl",
@@ -86,15 +86,14 @@ export default hopeTheme(
 
       // 启用之前需安装 @waline/client
       // 警告: 这是一个仅供演示的测试服务，在生产环境中请自行部署并使用自己的服务！
-      comment: {
-        provider: "Waline",
-        serverURL:
-          "https://my-rose-whisper-w179xzs4a-cys-roses-projects.vercel.app",
-      },
+      // comment: {
+      //   provider: "Waline",
+      //   serverURL: "my-rose-whisper-7a0nd45vv-cys-roses-projects.vercel.app",
+      // },
 
-      components: {
-        components: ["Badge", "VPCard"],
-      },
+      // components: {
+      //   components: ["Badge", "VPCard"],
+      // },
 
       // 此处开启了很多功能用于演示，你应仅保留用到的功能。
       markdownImage: {

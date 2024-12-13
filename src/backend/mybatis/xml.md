@@ -2,6 +2,7 @@
 # 此页面会在文章列表置顶
 # sticky: true
 # 此页面会出现在星标文章中
+title: 解析 MyBatis 的 XML 配置文件
 star: true
 order: 2
 tag:

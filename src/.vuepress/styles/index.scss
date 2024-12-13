@@ -1,1 +1,10 @@
 // place your custom styles here
+/* .vuepress/styles/index.css */
+.vp-article-title span[property="headline"] {
+  color: #8b0000; /* 深红色 */
+  font-size: 1.5em;
+  font-weight: bold;
+  text-align: center;
+  padding: 10px;
+  background-color: #ffe4e1; /* 偏红色背景 */
+}

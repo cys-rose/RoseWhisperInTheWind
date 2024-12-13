@@ -1,7 +1,7 @@
 import { sidebar } from "vuepress-theme-hope";
 
 export default sidebar({
-  "/posts": [
+  "/backend/": [
     {
       text: "MyBatis",
       icon: "book",
@@ -20,12 +20,37 @@ export default sidebar({
       ],
     },
     {
+      text: "JUC",
+      icon: "book",
+      prefix: "juc/",
+      children: [
+        {
+          text: "深挖Synchronized原理",
+          icon: "pen-to-square",
+          link: "Synchronized",
+        },
+      ],
+    },
+  ],
+  "/computer": [
+    {
       text: "操作系统",
       icon: "book",
       prefix: "OS/",
       children: [
         { text: "进程与线程", icon: "pen-to-square", link: "ProcessThread" },
         { text: "文件描述符", icon: "pen-to-square", link: "FD" },
+      ],
+    },
+    {
+      text: "计算机网络",
+      icon: "book",
+      prefix: "computernetwork/",
+      children: [
+        { text: "序章", icon: "pen-to-square", link: "computerNetwork" },
+        { text: "物理层", icon: "pen-to-square", link: "wuliceng" },
+        { text: "链路层", icon: "pen-to-square", link: "lianluceng" },
+        { text: "网络层", icon: "pen-to-square", link: "wangluoceng" },
       ],
     },
   ],
