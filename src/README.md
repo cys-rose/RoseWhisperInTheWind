@@ -8,10 +8,10 @@ heroText: Rose Whispers in the Wind
 heroFullScreen: true
 tagline: 我希望有个如你一般的人，如清晨的阳光般温暖
 projects:
-  # - icon: project
-  #   name: 项目名称
-  #   desc: 项目详细描述
-  #   link: https://你的项目链接
+  - icon: project
+    name: 营销抽奖平台
+    desc: 没有做登录，只能用这个url访问。DDD架构，页面看着简单，但后端代码6w+行！
+    link: http://www.rosewhisper.top/?userId=rose&activityId=100301
 
   # - icon: book
   #   name: 书籍推荐
