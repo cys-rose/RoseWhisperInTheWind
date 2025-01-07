@@ -18,6 +18,16 @@ export default navbar([
         ],
       },
       {
+        text: "Spring",
+        icon: "pen-to-square",
+        prefix: "spring/",
+        children: [
+          { text: "介绍", link: "introduce" },
+          { text: "提前须知", link: "havetoknow" },
+          { text: "Bean的生命周期", link: "beanLifeCycle" },
+        ],
+      },
+      {
         text: "Redis",
         icon: "pen-to-square",
         prefix: "redis/",
@@ -29,7 +39,11 @@ export default navbar([
           },
           {
             text: "Redis分布式锁",
-            link: "distributedLock",
+            link: "distributeLock",
+          },
+          {
+            text: "Redis缓存问题",
+            link: "cacheProblem",
           },
         ],
       },
