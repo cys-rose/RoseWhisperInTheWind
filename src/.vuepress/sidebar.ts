@@ -10,6 +10,7 @@ export default sidebar({
         { text: "介绍", link: "introduction" },
         { text: "解析XML配置文件", link: "xml" },
         { text: "解析Mapper配置文件", link: "xmlMapper" },
+        { text: "解析Executor家族", link: "executor" },
         { text: "一级缓存&二级缓存", link: "cache" },
       ],
     },
