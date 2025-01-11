@@ -42,6 +42,10 @@ export default sidebar({
           text: "Redis缓存问题",
           link: "cacheProblem",
         },
+        {
+          text: "Redis什么时候会宕机",
+          link: "redisDied",
+        },
       ],
     },
     {
@@ -128,6 +132,14 @@ export default sidebar({
     {
       text: "扫描二维码如何登录",
       link: "QRCode",
+    },
+    {
+      text: "如何将数组转换成集合",
+      link: "howtoarray",
+    },
+    {
+      text: "什么是幂等性",
+      link: "mideng",
     },
   ],
   "/netty": [
