@@ -52,7 +52,10 @@ export default sidebar({
       text: "设计模式",
       icon: "book",
       prefix: "design/",
-      children: [{ text: "单例模式", link: "singleton" }],
+      children: [
+        { text: "单例模式", link: "singleton" },
+        { text: "模板模式", link: "template" },
+      ],
     },
   ],
   "/backendPro": [
@@ -63,14 +66,13 @@ export default sidebar({
       children: [
         {
           text: "深挖Synchronized原理",
-          icon: "pen-to-square",
           link: "Synchronized",
         },
         {
           text: "如何创建一个线程",
-          icon: "pen-to-square",
           link: "thread",
         },
+        { text: "ReentrantLock中的AQS", link: "ReentrantLock" },
       ],
     },
     {

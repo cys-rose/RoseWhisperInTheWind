@@ -60,6 +60,7 @@ export default navbar([
         prefix: "design/",
         children: [
           { text: "单例模式", icon: "pen-to-square", link: "singleton" },
+          { text: "模板模式", icon: "pen-to-square", link: "template" },
         ],
       },
     ],
@@ -82,6 +83,7 @@ export default navbar([
             text: "如何创建一个线程",
             link: "thread",
           },
+          { text: "ReentrantLock中的AQS", link: "ReentrantLock" },
         ],
       },
       {
