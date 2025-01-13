@@ -202,3 +202,53 @@ public class ConditionObject implements Condition {
     }
 }
 ```
+
+## 轻松一下
+
+1. 非公平锁中的`lock()`和`trylock()`方法有什么区别？
+
+```java
+    public void lock() {
+        // 未获取到锁，被放到AQS队列中
+        sync.lock();
+    }
+
+    public boolean tryLock() {
+        return sync.nonfairTryAcquire(1);
+    }
+
+    final boolean nonfairTryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        if (c == 0) {
+            // 获取到返回true
+            if (compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        }
+        // 锁重入
+        else if (current == getExclusiveOwnerThread()) {
+            int nextc = c + acquires;
+            if (nextc < 0) // overflow
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        // 获取不到不阻塞，直接返回false
+        return false;
+    }
+```
+
+2. 获取锁的方法为什么要加过期时间？
+
+```java
+    public boolean tryLock(long timeout, TimeUnit unit)
+            throws InterruptedException {
+        return sync.tryAcquireNanos(1, unit.toNanos(timeout));
+    }
+```
+
+- 防止死锁
+- 防止线程一直尝试获取锁
+- 对于具有严格时间限制的操作，其可允许线程在无法及时获取锁时（返回 false 时）继续执行替代操作。

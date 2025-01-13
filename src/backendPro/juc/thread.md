@@ -29,13 +29,17 @@
     private native void start0();
 ```
 
+## 创建流程
+
+所以说真正的流程是：`Java中创建线程.start()` -&gt; `Thread.start0()` -&gt; `JVM中调用创建函数` -&gt; `设置Java线程状态为RUNNABLE` -&gt; `根据不同OS创建并唤醒线程` -&gt; `回调run方法启动Java线程`
+
 其实执行完`start0()`方法后，线程状态就从`NEW`变为`RUNNABLE`。而 Thread.run()方法更像是去执行这个任务，它并不是创建线程的方法（个人理解）。
 
-2. 为什么实现 Runnable 接口、实现 Callable 接口都不是创建线程？
+1. 为什么实现 Runnable 接口、实现 Callable 接口都不是创建线程？
    以下是我个人学习理解：
    1. Runnable 和 Callable 本质上都是一个要去执行的任务，只是 Callable 有返回值，Runnable 无返回值。
    2. 你的类实现类上面两个接口是变成了一个任务，最后还不得是作为参数放到`Thread`的构造方法中。所以这也不是在创建线程。
-3. 为什么线程池也不是创建 Thread 的方法？
+2. 为什么线程池也不是创建 Thread 的方法？
    因为其本质还是调用了 Thread.start()方法。只是对使用者屏蔽了，让你用着更方便。
    图中的 t 是这样定义的：`w = new Worker(firstTask); final Thread t = w.thread;`
    ![线程池创建线程的本质](./image/线程池创建线程的本质.png)
@@ -43,7 +47,7 @@
 ## Java 的线程和 OS 的线程有什么关系？
 
 1. 有没有听有的人说：Java 线程本质上就是 OS 线程。但我总感觉有点别扭，我认为 Java 线程就像是司机，OS 线程就像是汽车。Java 线程需要借助 OS 线程来在 CPU 上运行。因为当在 Java 程序中创建一个线程并启动它（例如调用 Thread.start()方法），JVM 会请求操作系统创建一个相应的 OS 线程来实际执行这个 Java 线程中的代码。那么 Java 线程和 OS 线程一直都是这种一对一的吗？非也！
-2. **JDK21**出现了个新东西，**_虚拟线程_**：它与 OS 线程之间的关系就变成了 n 对 m（n 大于 m）。为了更高效地处理高并发场景。是不是 Java 开发者感觉 Golang 的协程太吊了而发明的？
+2. **JDK21**出现了个新东西，**_虚拟线程_**：它与 OS 线程之间的关系就变成了 n 对 m（n 小于 m）。为了更高效地处理高并发场景。是不是 Java 开发者感觉 Golang 的协程太吊了而发明的？
 
 ```java
     public static void main(String[] args) {
