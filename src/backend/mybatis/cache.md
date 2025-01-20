@@ -432,6 +432,38 @@ public class TransactionalCache implements Cache {
     }
 ```
 
+### 二级缓存保存在哪？
+
+那肯定是一个全局所有人都能拿到的地方喽，而且生命周期要与整个应用一样长的呗。它就是`Configuration`中。其实在使用`XmlMapperBuilder`的时候，会在开启二级缓存的 mapper 中调用`Configuration`的`addCache`方法，把`Cache`对象保存到`Configuration`中。
+
+```java
+    /**
+     * <cache eviction="FIFO" flushInterval="600000" size="512" readOnly="true"/>
+     */
+    private void cacheElement(Element context) {
+        if (context == null) return;
+        // 基础配置信息
+        String type = context.attributeValue("type", "PERPETUAL");
+        Class<? extends Cache> typeClass = typeAliasRegistry.resolveAlias(type);
+        // 缓存队列 FIFO
+        String eviction = context.attributeValue("eviction", "FIFO");
+        Class<? extends Cache> evictionClass = typeAliasRegistry.resolveAlias(eviction);
+        Long flushInterval = Long.valueOf(context.attributeValue("flushInterval"));
+        Integer size = Integer.valueOf(context.attributeValue("size"));
+        boolean readWrite = !Boolean.parseBoolean(context.attributeValue("readOnly", "false"));
+        boolean blocking = !Boolean.parseBoolean(context.attributeValue("blocking", "false"));
+
+        // 解析额外属性信息；<property name="cacheFile" value="/tmp/xxx-cache.tmp"/>
+        List<Element> elements = context.elements();
+        Properties props = new Properties();
+        for (Element element : elements) {
+            props.setProperty(element.attributeValue("name"), element.attributeValue("value"));
+        }
+        // 构建缓存
+        builderAssistant.useNewCache(typeClass, evictionClass, flushInterval, size, readWrite, blocking, props);
+    }
+```
+
 ## 总结
 
 以上就是一级缓存，二级缓存的讲解了。比较好玩的就是这里面频繁使用了装饰者模式，就把整个代码搞得看起来乱乱的，但是其实用起来还是很清晰的，扩展性也很强，想要什么二级缓存策略直接自己写一个装饰者就 ok 了。好了就分享这么多喽！

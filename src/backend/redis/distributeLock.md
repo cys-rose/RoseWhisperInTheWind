@@ -57,6 +57,10 @@ Timeout task = this.getServiceManager().newTimeout(new TimerTask() {
 
 ```
 
+### 分布式锁如何可重入
+
+使用 Hash 作为锁的 value，Hash 的 key 是线程 id，value 是重入次数。然后采用 lua 脚本来确保加锁重入和释放锁的原子性。
+
 ### 分布式锁性能优化
 
 如何让一个秒杀场景（高并发）的并发度突然提高 10 倍？

@@ -73,6 +73,7 @@ export default sidebar({
           link: "thread",
         },
         { text: "ReentrantLock中的AQS", link: "ReentrantLock" },
+        { text: "ThreadLocal详解", link: "ThreadLocal" },
       ],
     },
     {
@@ -114,9 +115,8 @@ export default sidebar({
     {
       text: "DDD",
       icon: "sitemap",
-      prefix: "DDD/",
       children: [
-        { text: "界限上下文", link: "boundContext" },
+        { text: "限界上下文", link: "boundContext" },
         { text: "系统上下文", link: "systemContext" },
         { text: "上下文映射", link: "contextmapping" },
       ],
