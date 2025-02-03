@@ -93,6 +93,7 @@ public abstract class AbstractQueuedSynchronizer{
          * unconditionally propagate
          */
         static final int PROPAGATE = -3;
+        volatile Thread thread;
     }
     // 用这俩构成个双向链表
     private transient volatile Node head;
@@ -203,6 +204,78 @@ public class ConditionObject implements Condition {
 }
 ```
 
+### 可重入锁加锁流程
+
+ReentrantLock.lock() -&gt; NonfairSync.lock() -&gt; AQS.acquire(1) -&gt; NonfairSync.tryAcquire(1) -&gt; Sync.nonfairTryAcquire(1)
+
+```java
+    // AQS中
+    public final void acquire(int arg) {
+        if (!tryAcquire(arg) && // 获取锁失败进入下面的
+            acquireQueued(addWaiter(Node.EXCLUSIVE), arg))
+            selfInterrupt();
+    }
+    private Node addWaiter(Node mode) {
+        Node node = new Node(Thread.currentThread(), mode);
+        // 加入阻塞队列中（双向链表）
+        Node pred = tail;
+        if (pred != null) {
+            node.prev = pred;
+            if (compareAndSetTail(pred, node)) {
+                pred.next = node;
+                return node;
+            }
+        }
+        // 第一个节点入队的操作
+        enq(node);
+        return node;
+    }
+```
+
+```java
+    // Sync中
+    final boolean nonfairTryAcquire(int acquires) {
+        final Thread current = Thread.currentThread();
+        int c = getState();
+        if (c == 0) { // 锁没被占用
+            if (compareAndSetState(0, acquires)) {
+                setExclusiveOwnerThread(current);
+                return true;
+            }
+        } // 锁被占用，判断获得锁的线程是不是当前线程
+        else if (current == getExclusiveOwnerThread()) {
+            //  nextc = c + 1
+            int nextc = c + acquires;
+            if (nextc < 0) // overflow
+                throw new Error("Maximum lock count exceeded");
+            setState(nextc);
+            return true;
+        }
+        return false;
+    }
+```
+
+### 可重入锁的解锁流程
+
+ReentrantLock.unlock() -&gt; AQS.release(1) -&gt; Sync.tryRelease(1)
+
+```java
+    protected final boolean tryRelease(int releases) {
+        // 进行 -1 操作
+        int c = getState() - releases;
+        // 判断当前线程是否是获得这个锁的线程
+        if (Thread.currentThread() != getExclusiveOwnerThread())
+            throw new IllegalMonitorStateException();
+        boolean free = false;
+        if (c == 0) {
+            free = true;
+            setExclusiveOwnerThread(null);
+        }
+        setState(c);
+        return free;
+    }
+```
+
 ## 轻松一下
 
 1. 非公平锁中的`lock()`和`trylock()`方法有什么区别？
@@ -252,3 +325,6 @@ public class ConditionObject implements Condition {
 - 防止死锁
 - 防止线程一直尝试获取锁
 - 对于具有严格时间限制的操作，其可允许线程在无法及时获取锁时（返回 false 时）继续执行替代操作。
+
+3. 如何实现独占锁和共享锁？
+   通过重写 AQS 中的`tryAcquire()`和`tryRelease()`方法实现独占锁，重写`tryAcquireShared()`和`tryReleaseShared()`方法实现共享锁。
