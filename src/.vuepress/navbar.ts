@@ -52,6 +52,7 @@ export default navbar([
             text: "Redis什么时候会宕机",
             link: "redisDied",
           },
+          { text: "Redis做预扣减", link: "preDecr" },
         ],
       },
       {
@@ -85,6 +86,7 @@ export default navbar([
           },
           { text: "ReentrantLock中的AQS", link: "ReentrantLock" },
           { text: "ThreadLocal详解", link: "ThreadLocal" },
+          { text: "各种各样的锁", link: "allLock" },
         ],
       },
       {
