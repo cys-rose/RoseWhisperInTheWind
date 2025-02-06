@@ -145,6 +145,10 @@ export default sidebar({
       text: "什么是幂等性",
       link: "mideng",
     },
+    {
+      text: "分布式锁",
+      link: "alldistributelock",
+    },
   ],
   "/netty": [
     {

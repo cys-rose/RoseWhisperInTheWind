@@ -169,6 +169,8 @@ public class StockService {
 
 #### Redisson
 
+Redisson 的分布式锁通过 Redis 的原子操作和 Lua 脚本实现，支持可重入、公平锁、自动续期及高可用。它的核心机制包括基于 Hash 结构的锁记录、看门狗自动延长锁有效期，以及 RedLock 算法应对多节点容错。相比手动实现 SETNX，Redisson 提供了更健壮和易用的 API，适用于需要协调分布式系统并发访问的场景，但在使用时需注意 Redis 集群的可用性和锁的超时设置。
+
 1. 在 Redisson 中也提供了可重入锁并且可以自动锁续期，原理如下
 
 ```java
