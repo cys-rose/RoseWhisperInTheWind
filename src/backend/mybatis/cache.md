@@ -63,7 +63,7 @@ public class PerpetualCache implements Cache {
 
 ### PerpetualCache 中的 key 是什么？
 
-了解其中的 HashMap 的 key 也很重要。只有第二用相同的 key 到一级缓存中找才能找到嘛！这也是一级缓存命中问题。下面请看生成 key 的方法。注释中就是生成 key 的关键要素。总结起来就是: **Sql 语句和参数必须相同、MappedStatement 的 id 必须相同、RowBounds 返回的范围得相同，且没有执行`flushCache()`、没有执行 update 方法，而且还得是同一个 Session。**这样才能保证一级缓存命中。
+了解其中的 HashMap 的 key 也很重要。只有第二用相同的 key 到一级缓存中找才能找到嘛！这也是一级缓存命中问题。下面请看生成 key 的方法。注释中就是生成 key 的关键要素。总结起来就是: **Sql 语句和参数必须相同、MappedStatement 的 id 必须相同、RowBounds 返回的范围得相同，且没有执行`flushCache()`、没有执行 update 方法，而且还得是同一个 Session**。这样才能保证一级缓存命中。
 
 ```java
     // BaseExecutor类中的方法
