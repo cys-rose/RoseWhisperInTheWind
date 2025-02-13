@@ -12,15 +12,24 @@
 ```lua
 -- KEYS[1]: 可用库存Key（product:stock:1001）
 -- KEYS[2]: 预扣库存Key（product:prelock:1001）
+-- KEYS[3]: 订单预扣记录Key（order:prelock:1001）
 -- ARGV[1]: 扣减数量（通常为1）
+-- ARGV[2]: 订单预扣记录的过期时间（秒）
 
 local availableStock = tonumber(redis.call('GET', KEYS[1])) or 0
 local deductQty = tonumber(ARGV[1])
+local prelockKey = KEYS[3]
+local prelockExpireTime = tonumber(ARGV[2])
 
 if availableStock >= deductQty then
     -- 扣减可用库存，增加预扣库存
     redis.call('DECRBY', KEYS[1], deductQty)
     redis.call('INCRBY', KEYS[2], deductQty)
+
+    -- 创建订单预扣记录Key并设置过期时间
+    redis.call('SET', prelockKey, '1')
+    redis.call('EXPIRE', prelockKey, prelockExpireTime)
+
     return 1  -- 成功
 else
     return 0  -- 库存不足
@@ -32,8 +41,11 @@ end
 当用户付款后，代表这个库存正式售出了，需要把预扣减库存减 1。
 
 ```lua
+-- KEYS[1]: 订单预扣记录 Key（order:prelock:1001）
 -- KEYS[2]: 预扣库存Key（product:prelock:1001）
-redis.call('DECR', KEYS[2]) -- 预扣减库存减 1
+local qty = redis.call('HGET', KEYS[1], 'qty') or 0
+redis.call('DECR', qtr) -- 预扣减库存减 1
+redis.call('DEL', KEYS[1])  -- 清理记录
 ```
 
 ## 库存回补逻辑
@@ -41,21 +53,13 @@ redis.call('DECR', KEYS[2]) -- 预扣减库存减 1
 库存回补可能发生在订单超时，或者用户取消下单。这时要根据订单 id 来将这次订单中预扣减的库存加到可用库存中。这里也要使用 lua 脚本保证原子性。
 
 ```lua
--- KEYS[1]: 预扣库存Key（product:prelock:1001）
--- KEYS[2]: 可用库存Key（product:stock:1001）
--- ARGV[1]: 回补数量
-
-local preLockStock = tonumber(redis.call('GET', KEYS[1])) or 0
-local rollbackQty = tonumber(ARGV[1])
-
-if preLockStock >= rollbackQty then
-    -- 原子化操作：减少预扣库存，增加可用库存
-    redis.call('DECRBY', KEYS[1], rollbackQty)
-    redis.call('INCRBY', KEYS[2], rollbackQty)
-    return 1  -- 成功
-else
-    return 0  -- 预扣库存不足（可能已支付）
-end
+-- KEYS[1]: 订单预扣记录 Key（order:prelock:1001）
+-- KEYS[2]: 可用库存 Key
+-- KEYS[3]: 预扣库存 Key
+local qty = redis.call('HGET', KEYS[1], 'qty') or 0
+redis.call('INCRBY', KEYS[2], qty)
+redis.call('DECRBY', KEYS[3], qty)
+redis.call('DEL', KEYS[1])  -- 清理记录
 ```
 
 ## 加锁安全措施
@@ -86,7 +90,7 @@ if (locked) {
 为了防止用户多次点击下单按钮，我们要做好幂等处理。
 
 ```lua
--- KEYS[1]: 幂等性Key（idempotent:order:订单ID）
+-- KEYS[1]: 幂等性Key，如 idempotent:order:{orderId}:{operationType}
 -- 检查是否已处理过该请求
 if redis.call('SET', KEYS[1], 1, 'NX', 'EX', 3600) then
     -- 执行库存操作

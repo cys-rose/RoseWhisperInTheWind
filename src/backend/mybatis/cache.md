@@ -231,7 +231,7 @@ public class CacheKey implements Cloneable, Serializable {
 
 ## 二级缓存
 
-二级缓存也称为 namespace 级别的缓存，和一级缓存有啥区别的？上面说过一级缓存是 Session 级别的。所以当 Session 最后 commit 时，这个缓存中的东西就都被清除了。
+二级缓存也称为 namespace 级别的缓存，和一级缓存有啥区别的？上面说过一级缓存是 Session 级别的。所以当 Session 最后 commit 时，这个一级缓存就没了。
 
 ```java
     // BaseExecutor类中
@@ -244,6 +244,15 @@ public class CacheKey implements Cloneable, Serializable {
             transaction.commit();
         }
     }
+
+    public class PerpetualCache implements Cache {
+        private Map<Object, Object> cache = new HashMap<>();
+
+        @Override
+        public void clear() {
+            cache.clear();
+        }
+    }
 ```
 
 那么 namespace 级别的缓存是什么意思呢？是因为二级缓存基于 namespace 与一个 Mapper 想对应。它会在整个应用程序的生命周期内存在，其生命周期可以横跨多个 Session。
@@ -253,6 +262,7 @@ public class CacheKey implements Cloneable, Serializable {
 二级缓存中有很多策略可供选择，比如 FIFO、LRU、Soft、Weak。但是我在项目里只实现了 FIFO 的，所以接下来的介绍也是基于 FIFO 策略的。其实二级缓存就是在原来的 PerpetualCache 的基础上进行了一些增强，使用了装饰者模式。
 
 ```java
+// 相当于PerpetualCache的装饰者
 public class FifoCache implements Cache{
     // delegate就是PerpetualCache
     private final Cache delegate;
@@ -328,11 +338,11 @@ public class FifoCache implements Cache{
     }
 ```
 
-2. tcm: `TransactionalCacheManager`事务缓存管理器。有啥用呢？最初我学的时候也挺迷糊的，现在我让你非常容易地理解它，一个 Session 对应着一个`TransactionalCacheManager`对象，每个`TransactionalCacheManager`对象管理多个`TransactionalCache`暂存区对象。暂存区对象中也维护了一个`Cache`对象，这个`Cache`就是我们选择的具体二级缓存策略的`Cache`对象。
+1. tcm: `TransactionalCacheManager`事务缓存管理器。有啥用呢？最初我学的时候也挺迷糊的，现在我让你非常容易地理解它，一个 Mapper 对应着一个`TransactionalCacheManager`对象，每个`TransactionalCacheManager`对象管理多个`TransactionalCache`暂存区对象（也是真正保存二级缓存的地方）。暂存区对象中也维护了一个`Cache`对象，这个`Cache`就是我们选择的具体二级缓存策略的`Cache`对象。
 
 ```java
 public class TransactionalCacheManager {
-    // TransactionalCache是暂存区
+
     private Map<Cache, TransactionalCache> transactionalCaches = new HashMap<>();
 
     public void clear(Cache cache) {
@@ -372,13 +382,13 @@ public class TransactionalCacheManager {
         return txCache;
     }
 }
-// 暂存区
+// 暂存区也是真正保存二级缓存数据的地方
 public class TransactionalCache implements Cache {
-
+    // 真正保存二级缓存数据
     private Cache delegate;
 
     private boolean clearOnCommit;
-    // 保存位置
+    // 暂存区 未commit之前都先放到这里
     private Map<Object, Object> entriesToAddOnCommit;
     // 缓存未命中的key
     private Set<Object> entriesMissedInCache;
