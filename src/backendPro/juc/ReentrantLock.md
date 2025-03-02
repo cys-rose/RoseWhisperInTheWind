@@ -191,6 +191,7 @@ public class ConditionObject implements Condition {
 
         // 将该node节点放入AQS的双向链表中，（插到尾部）
         Node p = enq(node); // p是插入node后，node的prev
+        // 这里主要是为了确保自己的前一个node可以唤醒我
         int ws = p.waitStatus; // ws是p的状态，就是Node的哪几个常量
         // 如果p的状态是1（被取消，无效结点）
         // 或者p不是无效结点的话，将p的状态设置为SIGNAL（-1）如果改失败了才执行if的逻辑
@@ -260,6 +261,18 @@ ReentrantLock.lock() -&gt; NonfairSync.lock() -&gt; AQS.acquire(1) -&gt; Nonfair
 ReentrantLock.unlock() -&gt; AQS.release(1) -&gt; Sync.tryRelease(1)
 
 ```java
+    // AbstractQueuedSynchronizer 的 release 方法
+    public final boolean release(int arg) {
+        if (tryRelease(arg)) {
+            Node h = head;
+            if (h != null && h.waitStatus != 0)
+                // 唤醒队列中的一个节点（线程）头节点的next
+                // 如果第一个唤醒失败，则从尾节点往前遍历依此唤醒
+                unparkSuccessor(h);
+            return true;
+        }
+        return false;
+    }
     protected final boolean tryRelease(int releases) {
         // 进行 -1 操作
         int c = getState() - releases;

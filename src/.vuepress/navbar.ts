@@ -62,6 +62,7 @@ export default navbar([
         children: [
           { text: "单例模式", icon: "pen-to-square", link: "singleton" },
           { text: "模板模式", icon: "pen-to-square", link: "template" },
+          { text: "代理模式", icon: "pen-to-square", link: "proxy" },
         ],
       },
     ],

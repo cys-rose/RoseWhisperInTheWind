@@ -43,7 +43,7 @@ public class StockService {
 
 1. 悲观锁 `select xxx for update`
    悲观锁中如何保障使用的是行级锁？
-   - 条件中的字段是索引字段
+   - 条件中的字段是索引字段（对索引查询）
    - 条件使用的是具体值，如 = xxx
 
 ```java

@@ -8,7 +8,7 @@
 
 ## Monitor 原理
 
-在提起 synchronized 之前必须要和大家说一下 Monitor 对象。Monitor 被翻译成监视器，每个 Java 对象都可以关联一个 Monitor 对象，如果给一个对象加上重量级锁后，这个对象头中的 Mark Word 就被设置成指向 Monitor 对象的指针。
+在提起 synchronized 之前必须要和大家说一下 Monitor 对象。Monitor 被翻译成监视器，每个 Java 对象都可以关联一个 Monitor 对象，如果给一个对象加上重量级锁后，这个对象头中的 Mark Word 就被设置成指向 Monitor 对象的指针。同时还会保存锁重入的次数。
 ![Alt](./image/Monitor结构.png)
 
 - WaitSet：是那些调用了 wait( )方法的线程，调用 wait( )的线程会进入进入 WAITING 状态并，主动放弃这个锁对象进入 WaitSet 中等别的线程 notify，在别的线程 notify 后会进入 EntryList 中和大家一起竞争锁资源。

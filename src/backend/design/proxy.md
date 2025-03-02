@@ -59,7 +59,7 @@ public class LoggingInvocationHandler implements InvocationHandler {
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         // 在方法调用前添加日志记录
         System.out.println("开始调用方法: " + method.getName());
-        // 调用目标对象的方法，method就是被代理的方法
+        // 调用目标对象（target）的方法，method就是被代理的方法
         Object result = method.invoke(target, args);
         // 在方法调用后添加日志记录
         System.out.println("方法调用结束: " + method.getName());
@@ -93,6 +93,7 @@ public class JdkDynamicProxyExample {
     public final void addUser(String username) throws {
         try {
             // h 就是我们创建的 LoggingInvocationHandler
+            // m1就是被代理类的addUser方法
             super.h.invoke(this, m1, new Object[]{username});
         } catch (RuntimeException | Error var2) {
             throw var2;
@@ -105,6 +106,7 @@ public class JdkDynamicProxyExample {
 2. **目标对象接口数组**：传入这个是为了拿到被代理对象的所有方法功能，然后在代理类中变成`method1, method2, method3`等变量，并且还要实现这些接口并做实现嘛！
 
 ```java
+    // m1就是被代理类的addUser方法
     private static Method m1;
     private static Method m2;
     private static Method m3;
@@ -233,3 +235,10 @@ public class UserService$$EnhancerByCGLIB$$dff44b52 extends UserService implemen
 ```
 
 所以说是通过继承被代理类然后对被代理方法中调用 MethodInvocationHandler 的 intercept 方法来实现代理的。
+
+## 代理模式与装饰器模式的区别
+
+在上面的 JDK 动态代理与 CGLIB 动态代理中，可以看到生成出的代理对象的成员变量都是 private 的，而在装饰器模式中，被装饰的对象的成员变量都是 public 的（我们是调用对其中的被装饰者方法进行增强），所以第一点就是：
+
+1. 代理模式目的是主要是为了控制对对象的访问，装饰器模式主要是为了给对象添加新功能。
+2. 代理模式是通过我们声明的增强接口来对被代理对象进行增强，装饰器模式是通过在被装饰者方法调用的前后进行增强。

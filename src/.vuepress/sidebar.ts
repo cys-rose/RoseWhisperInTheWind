@@ -56,6 +56,7 @@ export default sidebar({
       children: [
         { text: "单例模式", link: "singleton" },
         { text: "模板模式", link: "template" },
+        { text: "代理模式", link: "proxy" },
       ],
     },
   ],
