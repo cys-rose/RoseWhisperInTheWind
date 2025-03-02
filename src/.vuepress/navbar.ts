@@ -1,5 +1,4 @@
 import { navbar } from "vuepress-theme-hope";
-import { redirects } from "./.temp/internal/routes";
 
 export default navbar([
   "/",
@@ -98,6 +97,15 @@ export default navbar([
             text: "直接内存",
             link: "directMemory",
           },
+          {
+            text: "三色标记算法",
+            link: "bingfaGC",
+          },
+          {
+            text: "类加载流程",
+            link: "classLoading",
+          },
+          { text: "双亲委派机制", link: "shuangqinweipai" },
         ],
       },
     ],
